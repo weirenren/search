@@ -83,6 +83,7 @@ import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.SingleOnSubscribe;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.progress.AnimatedProgressBar;
+import com.vim.shadowsocks.ui.ShadowActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -338,8 +339,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         lp.height = LayoutParams.MATCH_PARENT;
         customView.setLayoutParams(lp);
 
-        mArrowImage = customView.findViewById(R.id.arrow);
-        FrameLayout arrowButton = customView.findViewById(R.id.arrow_button);
+        mArrowImage = (ImageView) customView.findViewById(R.id.arrow);
+        FrameLayout arrowButton = (FrameLayout) customView.findViewById(R.id.arrow_button);
         if (mShowTabsInDrawer) {
             if (mArrowImage.getWidth() <= 0) {
                 mArrowImage.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
@@ -377,7 +378,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         arrowButton.setOnClickListener(this);
 
         // create the search EditText in the ToolBar
-        mSearch = customView.findViewById(R.id.search);
+        mSearch = (SearchView) customView.findViewById(R.id.search);
         mSearchBackground = customView.findViewById(R.id.search_container);
 
         // initialize search background color
@@ -2261,13 +2262,19 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         switch (v.getId()) {
             case R.id.arrow_button:
-                if (mSearch != null && mSearch.hasFocus()) {
-                    currentTab.requestFocus();
-                } else if (mShowTabsInDrawer) {
-                    mDrawerLayout.openDrawer(getTabDrawer());
-                } else {
-                    currentTab.loadHomepage();
-                }
+//                if (mSearch != null && mSearch.hasFocus()) {
+//                    currentTab.requestFocus();
+//                } else if (mShowTabsInDrawer) {
+//                    mDrawerLayout.openDrawer(getTabDrawer());
+//                } else {
+//                    currentTab.loadHomepage();
+//                }
+
+                Intent intent = new Intent(this, ShadowActivity.class);
+
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                startActivity(intent);
                 break;
             case R.id.button_next:
                 currentTab.findNext();

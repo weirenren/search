@@ -23,14 +23,6 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import javax.inject.Inject;
-
-import acr.browser.lightning.R;
-import acr.browser.lightning.BrowserApp;
-import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.dialog.BrowserDialog;
-import acr.browser.lightning.preference.PreferenceManager;
-
 import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.Single;
 import com.anthonycr.bonsai.SingleAction;
@@ -38,6 +30,13 @@ import com.anthonycr.bonsai.SingleOnSubscribe;
 import com.anthonycr.bonsai.SingleSubscriber;
 import com.anthonycr.bonsai.Subscription;
 
+import javax.inject.Inject;
+
+import acr.browser.lightning.BrowserApp;
+import acr.browser.lightning.R;
+import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.reading.HtmlFetcher;
 import acr.browser.lightning.reading.JResult;
 import acr.browser.lightning.utils.ThemeUtils;
@@ -297,7 +296,7 @@ public class ReadingActivity extends AppCompatActivity {
             case R.id.text_size_item:
 
                 View view = LayoutInflater.from(this).inflate(R.layout.dialog_seek_bar, null);
-                final SeekBar bar = view.findViewById(R.id.text_size_seekbar);
+                final SeekBar bar = (SeekBar) view.findViewById(R.id.text_size_seekbar);
                 bar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
                     @Override

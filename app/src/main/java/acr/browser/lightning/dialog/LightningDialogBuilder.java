@@ -192,12 +192,12 @@ public class LightningDialogBuilder {
         final AlertDialog.Builder editBookmarkDialog = new AlertDialog.Builder(activity);
         editBookmarkDialog.setTitle(R.string.title_edit_bookmark);
         final View dialogLayout = View.inflate(activity, R.layout.dialog_edit_bookmark, null);
-        final EditText getTitle = dialogLayout.findViewById(R.id.bookmark_title);
+        final EditText getTitle = (EditText) dialogLayout.findViewById(R.id.bookmark_title);
         getTitle.setText(item.getTitle());
-        final EditText getUrl = dialogLayout.findViewById(R.id.bookmark_url);
+        final EditText getUrl = (EditText) dialogLayout.findViewById(R.id.bookmark_url);
         getUrl.setText(item.getUrl());
         final AutoCompleteTextView getFolder =
-            dialogLayout.findViewById(R.id.bookmark_folder);
+                (AutoCompleteTextView) dialogLayout.findViewById(R.id.bookmark_folder);
         getFolder.setHint(R.string.folder);
         getFolder.setText(item.getFolder());
 

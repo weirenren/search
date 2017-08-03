@@ -11,11 +11,17 @@ android {
         targetSdkVersion project.targetSdkVersion
         versionName project.versionName
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
+    }
+
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "4g"
     }
 
     sourceSets {
-        lightningPlus.setRoot('src/LightningPlus')
-        lightningLite.setRoot('src/LightningLite')
+        lightningPlus.setRoot('src/main')
+//        lightningLite.setRoot('src/LightningLite')
     }
 
     buildTypes {
@@ -38,12 +44,12 @@ android {
             applicationId "acr.browser.lightning"
             versionCode project.versionCode_plus
         }
-
-        lightningLite {
-            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")"
-            applicationId "acr.browser.barebones"
-            versionCode project.versionCode_lite
-        }
+//
+//        lightningLite {
+//            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")"
+//            applicationId "acr.browser.barebones"
+//            versionCode project.versionCode_lite
+//        }
     }
 
     lintOptions {
@@ -65,6 +71,8 @@ dexcount {
 
 dependencies {
     testCompile 'junit:junit:4.12'
+
+    compile project(':engine')
 
     // support libraries
     def supportLibVersion = '25.4.0'
@@ -110,6 +118,9 @@ dependencies {
     debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 
-    // Kotlin
+//    // Kotlin
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    debugCompile 'com.facebook.stetho:stetho:1.3.1'
+    compile 'com.android.support:multidex:1.0.1'
 }
