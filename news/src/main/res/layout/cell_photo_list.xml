@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+    android:padding="3dp">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/sdv_cell_photo_list_pic"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/launch_screen"/>
+
+    <TextView
+        android:id="@+id/tv_cell_photo_list_title"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:maxLines="1"
+        android:background="@color/colorPhotoShadow"
+        android:text="第十届作家榜颁奖典礼"
+        android:textColor="#fff"/>
+
+
+</RelativeLayout>

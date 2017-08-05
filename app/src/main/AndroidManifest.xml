@@ -38,6 +38,18 @@
             android:value="2.1"/>
 
         <activity
+            android:name="tv.baokan.baokanandroid.ui.activity.SplashActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".MainActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
@@ -45,11 +57,14 @@
             android:launchMode="singleTask"
             android:theme="@style/Theme.LightTheme"
             android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+            <!--启动页-->
 
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+
+            <intent-filter>
+                <!--<action android:name="android.intent.action.MAIN"/>-->
+
+                <!--<category android:name="android.intent.category.DEFAULT"/>-->
+                <!--<category android:name="android.intent.category.LAUNCHER"/>-->
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <category android:name="android.intent.category.APP_BROWSER"/>
             </intent-filter>
