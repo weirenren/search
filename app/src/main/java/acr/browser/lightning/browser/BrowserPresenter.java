@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -11,20 +13,36 @@ import android.webkit.URLUtil;
 
 import com.anthonycr.bonsai.CompletableOnSubscribe;
 import com.anthonycr.bonsai.Schedulers;
+import com.google.gson.Gson;
+
+import java.io.File;
+import java.io.IOException;
 
 import javax.inject.Inject;
 
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
-import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.controller.UIController;
+import acr.browser.lightning.download.IDownLoadListener;
 import acr.browser.lightning.preference.PreferenceManager;
-
+import acr.browser.lightning.request.ClientupdateInfo;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.view.LightningView;
+import io.github.lizhangqu.coreprogress.ProgressHelper;
+import io.github.lizhangqu.coreprogress.ProgressUIListener;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import okio.BufferedSink;
+import okio.BufferedSource;
+import okio.Okio;
 
 /**
  * Presenter in charge of keeping track of
@@ -121,7 +139,7 @@ public class BrowserPresenter {
                 mView.setBackButtonEnabled(newTab.canGoBack());
                 mView.setForwardButtonEnabled(newTab.canGoForward());
                 mView.updateUrl(newTab.getUrl(), false);
-                mView.setTabView(newTab.getWebView());
+                mView.setTabView(newTab.getContentView());
                 int index = mTabsModel.indexOfTab(newTab);
                 if (index >= 0) {
                     mView.notifyTabViewChanged(mTabsModel.indexOfTab(newTab));
@@ -130,6 +148,42 @@ public class BrowserPresenter {
         }
 
         mCurrentTab = newTab;
+    }
+
+    /**
+     * 检查APP版本
+     * @throws IOException
+     */
+    public void checkAppVersion() throws Exception {
+
+        OkHttpClient okHttpClient = new OkHttpClient();
+        PackageManager pm = mApplication.getPackageManager();
+        PackageInfo pi = pm.getPackageInfo(mApplication.getPackageName(), 0);
+
+        final String versionName = pi.versionName;
+        final int versioncode = pi.versionCode;
+
+
+        Request request = new Request.Builder().url("").addHeader("verson", "11").build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Gson gson = new Gson();
+                ClientupdateInfo clientupdateInfo = gson.fromJson(response.body().charStream(), ClientupdateInfo.class);
+
+                if (versioncode != -1 && versioncode < clientupdateInfo.mVcode) {
+                    mView.updateApp(true);
+                } else {
+                    mView.updateApp(false);
+                }
+
+            }
+        });
+
     }
 
     /**
@@ -158,6 +212,86 @@ public class BrowserPresenter {
             default:
                 return homepage;
         }
+    }
+
+    public void downloadApk(String url, final IDownLoadListener downLoadListener) {
+
+        //client
+        OkHttpClient okHttpClient = new OkHttpClient();
+//request builder
+        Request.Builder builder = new Request.Builder();
+        builder.url(url);
+        builder.get();
+//call
+        Call call = okHttpClient.newCall(builder.build());
+//enqueue
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("TAG", "=============onFailure===============");
+                e.printStackTrace();
+                downLoadListener.onDownloadError();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.e("TAG", "=============onResponse===============");
+                Log.e("TAG", "request headers:" + response.request().headers());
+                Log.e("TAG", "response headers:" + response.headers());
+
+                //your original response body
+                ResponseBody body = response.body();
+                //wrap the original response body with progress
+                ResponseBody responseBody = ProgressHelper.withProgress(body, new ProgressUIListener() {
+
+                    //if you don't need this method, don't override this methd. It isn't an abstract method, just an empty method.
+                    @Override
+                    public void onUIProgressStart(long totalBytes) {
+                        super.onUIProgressStart(totalBytes);
+                        Log.e("TAG", "onUIProgressStart:" + totalBytes);
+                        if (downLoadListener != null) {
+                            downLoadListener.onStart(totalBytes);
+                        }
+                    }
+
+                    @Override
+                    public void onUIProgressChanged(long numBytes, long totalBytes, float percent, float speed) {
+                        Log.e("TAG", "=============start===============");
+                        Log.e("TAG", "numBytes:" + numBytes);
+                        Log.e("TAG", "totalBytes:" + totalBytes);
+                        Log.e("TAG", "percent:" + percent);
+                        Log.e("TAG", "speed:" + speed);
+                        Log.e("TAG", "============= end ===============");
+
+                        if (downLoadListener != null) {
+                            downLoadListener.onProgress(percent);
+                        }
+
+                    }
+
+                    //if you don't need this method, don't override this methd. It isn't an abstract method, just an empty method.
+                    @Override
+                    public void onUIProgressFinish() {
+                        if (downLoadListener != null) {
+                            downLoadListener.onDownloadFinish();
+                        }
+                        super.onUIProgressFinish();
+
+                    }
+
+                });
+                //read the body to file
+                BufferedSource source = responseBody.source();
+                File outFile = Constants.getUpdateApkFile(mApplication);
+                outFile.delete();
+                outFile.getParentFile().mkdirs();
+                outFile.createNewFile();
+                BufferedSink sink = Okio.buffer(Okio.sink(outFile));
+                source.readAll(sink);
+                sink.flush();
+                source.close();
+            }
+        });
     }
 
     /**

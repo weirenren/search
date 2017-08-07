@@ -1,49 +1,74 @@
-<!-- Copyright 2014 ACR Development -->
-<android.support.design.widget.CoordinatorLayout
-    android:id="@+id/coordinator_layout"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".browser.activity.BrowserActivity">
+    android:background="@color/colorPrimary"
+    android:clipToPadding="true"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
-        <android.support.v4.widget.DrawerLayout
-            android:id="@+id/drawer_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true">
+    <!--内容主体-->
+    <FrameLayout
+        android:id="@+id/fl_main_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/colorAllBackgroundColor"
+        android:clipToPadding="true"
+        android:fitsSystemWindows="true">
 
-            <LinearLayout
-                android:id="@+id/ui_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+    </FrameLayout>
 
-                <include layout="@layout/toolbar"/>
+    <!--底部分割线-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="#B3B3B3"/>
 
-                <include layout="@layout/browser_content"/>
+    <!--底部tabbar-->
+    <RadioGroup
+        android:id="@+id/rg_tabbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#F9F9F9"
+        android:orientation="horizontal"
+        android:padding="5dp">
 
-                <include layout="@layout/search_interface"/>
-            </LinearLayout>
+        <RadioButton
+            android:id="@+id/rb_news_item"
+            style="@style/tabbar_style"
+            android:background="@null"
+            android:drawableTop="@drawable/tabbar_item_selector_news"
+            android:text="资讯"/>
 
-            <FrameLayout
-                android:id="@+id/left_drawer"
-                android:layout_width="@dimen/navigation_width"
-                android:layout_height="match_parent"
-                android:layout_gravity="start"
-                android:background="?attr/drawerBackground"
-                android:fitsSystemWindows="true"
-                android:weightSum="1"/>
+        <RadioButton
+            android:id="@+id/rb_photo_item"
+            style="@style/tabbar_style"
+            android:background="@null"
+            android:drawableTop="@drawable/tabbar_item_selector_photo"
+            android:text="图秀"/>
 
-            <FrameLayout
-                android:id="@+id/right_drawer"
-                android:layout_width="@dimen/navigation_width"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                android:background="?attr/drawerBackground"
-                android:fitsSystemWindows="true"
-                android:weightSum="1"/>
+        <RadioButton
+            android:id="@+id/rb_hot_item"
+            style="@style/tabbar_style"
+            android:background="@null"
+            android:drawableTop="@drawable/tabbar_item_selector_hot"
+            android:text="热门"/>
 
-        </android.support.v4.widget.DrawerLayout>
+        <RadioButton
+            android:id="@+id/rb_profile_item"
+            style="@style/tabbar_style"
+            android:background="@null"
+            android:drawableTop="@drawable/tabbar_item_selector_profile"
+            android:text="我"/>
 
-</android.support.design.widget.CoordinatorLayout>
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/app_name"/>
+
+</LinearLayout>

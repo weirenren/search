@@ -44,7 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.MainActivity;
+import acr.browser.lightning.HomeBrowserActivity;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.BrowserDialog;
@@ -397,7 +397,7 @@ public final class Utils {
             return;
         }
         Log.d(TAG, "Creating shortcut: " + item.getTitle() + ' ' + item.getUrl());
-        Intent shortcutIntent = new Intent(activity, MainActivity.class);
+        Intent shortcutIntent = new Intent(activity, HomeBrowserActivity.class);
         shortcutIntent.setData(Uri.parse(item.getUrl()));
 
         final String title = TextUtils.isEmpty(item.getTitle()) ? activity.getString(R.string.untitled) : item.getTitle();

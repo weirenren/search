@@ -1,0 +1,110 @@
+<!-- Copyright 2014 ACR Development -->
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/coordinator_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".browser.activity.BrowserActivity">
+
+        <android.support.v4.widget.DrawerLayout
+            android:id="@+id/drawer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
+
+            <LinearLayout
+                android:id="@+id/ui_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <include layout="@layout/toolbar"/>
+
+                <include layout="@layout/browser_content"/>
+
+                <include layout="@layout/search_interface"/>
+
+                <!--<LinearLayout-->
+                    <!--android:orientation="vertical"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:background="@color/background"-->
+                    <!--android:layout_height="wrap_content">-->
+
+                    <!--<ImageView-->
+                        <!--android:layout_width="217dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_gravity="center"-->
+                        <!--android:src="@drawable/baidu_logo"/>-->
+
+                    <!--<RelativeLayout-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:background="@color/white"-->
+                        <!--android:focusable="true"-->
+                        <!--android:focusableInTouchMode="true"-->
+                        <!--&gt;-->
+                        <!--<Button-->
+                            <!--android:id="@+id/search_btn"-->
+                            <!--android:layout_width="82dp"-->
+                            <!--android:layout_height="52dp"-->
+                            <!--android:layout_alignParentRight="true"-->
+                            <!--android:textSize="16sp"-->
+                            <!--android:textColor="@color/white"-->
+                            <!--android:layout_marginLeft="10dp"-->
+                            <!--android:layout_marginRight="10dp"-->
+                            <!--android:background="@color/blue"-->
+                            <!--android:text="百度一下"/>-->
+
+                        <!--<EditText-->
+                            <!--android:layout_toLeftOf="@id/search_btn"-->
+                            <!--android:id="@+id/input_ed"-->
+                            <!--android:layout_alignParentLeft="true"-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_marginLeft="10dp"-->
+                            <!--android:layout_marginRight="10dp"-->
+                            <!--android:layout_height="wrap_content" />-->
+
+                    <!--</RelativeLayout>-->
+
+                    <!--<RelativeLayout-->
+                        <!--android:id="@+id/guanzhu_layout"-->
+                        <!--android:layout_marginTop="6dp"-->
+                        <!--android:layout_marginLeft="12dp"-->
+                        <!--android:layout_marginRight="12dp"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content">-->
+
+                        <!--<GridView-->
+                            <!--android:id="@+id/home_gridview"-->
+                            <!--android:horizontalSpacing="10dp"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:numColumns="auto_fit"/>-->
+
+                    <!--</RelativeLayout>-->
+
+                <!--</LinearLayout>-->
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/left_drawer"
+                android:layout_width="@dimen/navigation_width"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:background="?attr/drawerBackground"
+                android:fitsSystemWindows="true"
+                android:weightSum="1"/>
+
+            <FrameLayout
+                android:id="@+id/right_drawer"
+                android:layout_width="@dimen/navigation_width"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="?attr/drawerBackground"
+                android:fitsSystemWindows="true"
+                android:weightSum="1"/>
+
+        </android.support.v4.widget.DrawerLayout>
+
+</android.support.design.widget.CoordinatorLayout>

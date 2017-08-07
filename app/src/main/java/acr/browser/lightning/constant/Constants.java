@@ -3,8 +3,11 @@
  */
 package acr.browser.lightning.constant;
 
+import android.app.Application;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 
+import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -12,6 +15,8 @@ public final class Constants {
 
     private Constants() {
     }
+
+    public static boolean DEBUG = true;
 
     // Hardcoded user agents
     public static final String DESKTOP_USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36";
@@ -82,4 +87,10 @@ public final class Constants {
     public static final String[] TEXT_ENCODINGS = {"ISO-8859-1", UTF8, "GBK", "Big5", "ISO-2022-JP", "SHIFT_JS", "EUC-JP", "EUC-KR"};
 
     public static final String INTENT_ORIGIN = "URL_INTENT_ORIGIN";
+
+    public static final String UPDATE_APK_FILE = "update_apk_file.apk";
+    @NonNull
+    public static File getUpdateApkFile(@NonNull Application application) {
+        return new File(application.getFilesDir(), UPDATE_APK_FILE);
+    }
 }

@@ -83,23 +83,24 @@ import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.SingleOnSubscribe;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.progress.AnimatedProgressBar;
-import com.vim.shadowsocks.ui.ShadowActivity;
 
 import java.io.File;
 import java.io.IOException;
 
 import javax.inject.Inject;
 
+import acr.browser.lightning.BrowserApp;
+import acr.browser.lightning.ILightningViewGetter;
+import acr.browser.lightning.IncognitoActivity;
 import acr.browser.lightning.R;
-import acr.browser.lightning.reading.activity.ReadingActivity;
 import acr.browser.lightning.browser.BookmarksView;
 import acr.browser.lightning.browser.BrowserPresenter;
 import acr.browser.lightning.browser.BrowserView;
-import acr.browser.lightning.IncognitoActivity;
 import acr.browser.lightning.browser.SearchBoxModel;
 import acr.browser.lightning.browser.TabsManager;
 import acr.browser.lightning.browser.TabsView;
-import acr.browser.lightning.BrowserApp;
+import acr.browser.lightning.browser.fragment.BookmarksFragment;
+import acr.browser.lightning.browser.fragment.TabsFragment;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.constant.HistoryPage;
@@ -109,14 +110,15 @@ import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.database.history.HistoryModel;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
-import acr.browser.lightning.browser.fragment.BookmarksFragment;
-import acr.browser.lightning.browser.fragment.TabsFragment;
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator;
+import acr.browser.lightning.reading.activity.ReadingActivity;
 import acr.browser.lightning.receiver.NetworkReceiver;
+import acr.browser.lightning.request.ClientupdateInfo;
 import acr.browser.lightning.search.SearchEngineProvider;
 import acr.browser.lightning.search.SuggestionsAdapter;
 import acr.browser.lightning.search.engine.BaseSearchEngine;
 import acr.browser.lightning.settings.activity.SettingsActivity;
+import acr.browser.lightning.update.UpdateService;
 import acr.browser.lightning.utils.DrawableUtils;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
@@ -156,6 +158,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private SearchView mSearch;
     private ImageView mArrowImage;
 
+    private ImageView mHome;
+    private ImageView mPersonal;
+
     // Current tab view being displayed
     @Nullable private View mCurrentView;
 
@@ -173,7 +178,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private ValueCallback<Uri[]> mFilePathCallback;
 
     // Primitives
-    private boolean mFullScreen;
+    private boolean mFullScreen =false;
     private boolean mDarkTheme;
     private boolean mIsFullScreen = false;
     private boolean mIsImmersive = false;
@@ -221,6 +226,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private static final FrameLayout.LayoutParams COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(
         LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
+
     protected abstract boolean isIncognito();
 
     public abstract void closeActivity();
@@ -234,14 +240,16 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BrowserApp.getAppComponent().inject(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_search_main);
         ButterKnife.bind(this);
 
         mTabsManager = new TabsManager();
         mPresenter = new BrowserPresenter(this, isIncognito());
 
         initialize(savedInstanceState);
+
     }
+
 
     private synchronized void initialize(Bundle savedInstanceState) {
         initializeToolbarHeight(getResources().getConfiguration());
@@ -339,8 +347,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         lp.height = LayoutParams.MATCH_PARENT;
         customView.setLayoutParams(lp);
 
-        mArrowImage = (ImageView) customView.findViewById(R.id.arrow);
-        FrameLayout arrowButton = (FrameLayout) customView.findViewById(R.id.arrow_button);
+        mArrowImage = customView.findViewById(R.id.arrow);
+
+        mHome = customView.findViewById(R.id.home_img);
+        mPersonal = customView.findViewById(R.id.personal);
+
+        LinearLayout arrowButton = customView.findViewById(R.id.arrow_button);
         if (mShowTabsInDrawer) {
             if (mArrowImage.getWidth() <= 0) {
                 mArrowImage.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
@@ -366,6 +378,28 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mArrowImage.setImageResource(R.drawable.ic_action_home);
             mArrowImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
         }
+
+        mHome.setImageResource(R.drawable.ic_action_home);
+        mHome.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (mCurrentView != null && mCurrentView instanceof ILightningViewGetter) {
+                    LightningView lightningView = ((ILightningViewGetter) mCurrentView).getView();
+
+                    lightningView.loadStartpage();
+                }
+            }
+        });
+//        mPersonal.setImageResource(R.drawable.ic_action_desktop);
+//
+//        mPersonal.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                LoginActivity.start(BrowserActivity.this);
+//            }
+//        });
 
         // Post drawer locking in case the activity is being recreated
         Handlers.MAIN.post(new Runnable() {
@@ -430,6 +464,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mPresenter.setupTabs(intent);
             setIntent(null);
             mProxyUtils.checkForProxy(this);
+        }
+
+        try {
+            mPresenter.checkAppVersion();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -1068,7 +1108,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         removeViewFromParent(view);
         removeViewFromParent(mCurrentView);
-
         mBrowserFrame.addView(view, 0, MATCH_PARENT);
         if (mFullScreen) {
             view.setTranslationY(mToolbarLayout.getHeight() + mToolbarLayout.getTranslationY());
@@ -2262,19 +2301,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         switch (v.getId()) {
             case R.id.arrow_button:
-//                if (mSearch != null && mSearch.hasFocus()) {
-//                    currentTab.requestFocus();
-//                } else if (mShowTabsInDrawer) {
-//                    mDrawerLayout.openDrawer(getTabDrawer());
-//                } else {
-//                    currentTab.loadHomepage();
-//                }
+                if (mSearch != null && mSearch.hasFocus()) {
+                    currentTab.requestFocus();
+                } else if (mShowTabsInDrawer) {
+                    mDrawerLayout.openDrawer(getTabDrawer());
+                } else {
+                    currentTab.loadHomepage();
+                }
 
-                Intent intent = new Intent(this, ShadowActivity.class);
-
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                startActivity(intent);
                 break;
             case R.id.button_next:
                 currentTab.findNext();
@@ -2328,4 +2362,94 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    @Override
+    public void onDownloadFinish() {
+        Handlers.MAIN.post(new Runnable() {
+            @Override
+            public void run() {
+                Intent installIntent = new Intent(Intent.ACTION_VIEW);
+
+                int flag;
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                    flag = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY;
+                } else {
+                    flag = Intent.FLAG_ACTIVITY_NEW_TASK;
+                }
+                try {
+                    installIntent.setDataAndType((Uri.fromFile(Constants.getUpdateApkFile(getApplication()))),
+                            "application/vnd.android.package-archive");
+                    installIntent.setFlags(flag);
+
+                    startActivity(installIntent);
+                } catch (Exception e) {
+                    installIntent.setComponent(null);
+                    try {
+                        startActivity(installIntent);
+                    } catch (Exception e1) {
+
+                    }
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onProgress(float progress) {
+        Handlers.MAIN.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+            }
+        });
+    }
+
+    @Override
+    public void onStart(long totalSize) {
+        Handlers.MAIN.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+            }
+        });
+    }
+
+    @Override
+    public void updateApp(boolean update, final ClientupdateInfo client) {
+        if (update) {
+
+            android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+            builder.setTitle("检测到新版本!");
+            builder.setMessage(client.mChangeLog);
+            builder.setNegativeButton("取消", null);
+            builder.setPositiveButton("马上更新", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    // checkPermissions();
+                    // TODO: 检查写文件权限 2017/8/7 强制升级
+
+//                    Intent intent = new Intent(BrowserActivity.this, UpdateService.class);
+//                    intent.putExtra(UpdateService.APK_DOWNLOAD_URL, client.mDownloadUrl);
+//                    startService(intent);
+                    mPresenter.downloadApk(client.mDownloadUrl, BrowserActivity.this);
+                }
+            });
+            builder.show();
+
+
+        }
+    }
+
+    @Override
+    public void onDownloadError() {
+        Handlers.MAIN.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+            }
+        });
+    }
 }

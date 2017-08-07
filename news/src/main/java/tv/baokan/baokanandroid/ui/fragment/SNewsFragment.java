@@ -11,12 +11,12 @@ import com.share.news.R;
 
 public class SNewsFragment extends BaseFragment {
 
-    private
+
     @Override
     protected View prepareUI() {
-        LinearLayout view = (LinearLayout) View.inflate(mContext, R.layout.fragment_news, null);
 
-        view.addView(new );
+
+        LinearLayout view = (LinearLayout) View.inflate(mContext, R.layout.fragment_news, null);
         return view;
     }
 }

@@ -6,7 +6,10 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.view.View;
 
-public interface BrowserView {
+import acr.browser.lightning.download.IDownLoadListener;
+import acr.browser.lightning.request.ClientupdateInfo;
+
+public interface BrowserView extends IDownLoadListener {
 
     void setTabView(@NonNull View view);
 
@@ -38,4 +41,5 @@ public interface BrowserView {
 
     void notifyTabViewInitialized();
 
+    void updateApp(boolean update, ClientupdateInfo clientupdateInfo);
 }

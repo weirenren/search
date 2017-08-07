@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ECECF2"
+    android:overScrollMode="never"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical">
+
+        <!--头部区域-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="265dp"
+            android:background="@color/colorPrimary">
+
+            <!--头像部分 添加点击事件-->
+            <LinearLayout
+                android:id="@+id/ll_profile_portrait_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="90dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <!--头像-->
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/sdv_profile_portrait"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:padding="0dp"
+                    fresco:actualImageScaleType="fitXY"
+                    fresco:placeholderImage="@drawable/default_portrait"
+                    fresco:roundedCornerRadius="35dp"/>
+
+                <!--昵称-->
+                <TextView
+                    android:id="@+id/tv_profile_nickname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="登录账号"
+                    android:textColor="#fff"/>
+            </LinearLayout>
+
+            <!--遮罩上面的视图-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_alignParentBottom="true"
+                android:background="#19ffffff"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/ll_profile_collection_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_marginBottom="1dp"
+                        android:src="@drawable/profile_topbar_collection"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:text="收藏"
+                        android:textColor="#fff"
+                        android:textSize="13sp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_profile_comment_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_marginBottom="1dp"
+                        android:src="@drawable/profile_topbar_comment"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:text="评论"
+                        android:textColor="#fff"
+                        android:textSize="13sp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_profile_info_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_marginBottom="1dp"
+                        android:src="@drawable/profile_topbar_info"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="1dp"
+                        android:text="资料"
+                        android:textColor="#fff"
+                        android:textSize="13sp"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <!--列表区域-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#ECECF2"
+            android:orientation="vertical">
+
+            <!--分组间隔-->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="#ECECF2"/>
+
+            <!--清除缓存-->
+            <RelativeLayout
+                android:id="@+id/rl_profile_clear_cache_layout"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="#fff">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/setting_clear_icon"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="50dp"
+                    android:text="清除缓存"
+                    android:layout_marginLeft="50dp" />
+
+                <TextView
+                    android:id="@+id/tv_profile_cache"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:text="38.55M"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp" />
+
+                <!--分割线-->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="50dp"
+                    android:alpha="0.5"
+                    android:background="#ccc"
+                    android:layout_marginLeft="50dp" />
+
+            </RelativeLayout>
+
+            <!--设置正文字体-->
+            <RelativeLayout
+                android:id="@+id/rl_profile_set_font_layout"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="#fff">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/setting_star_icon"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="50dp"
+                    android:text="正文字体"
+                    android:layout_marginLeft="50dp" />
+
+                <TextView
+                    android:id="@+id/tv_profile_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:text="中号字体"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp" />
+
+            </RelativeLayout>
+
+            <!--分组间隔-->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="#ECECF2"/>
+
+            <!--意见反馈-->
+            <RelativeLayout
+                android:id="@+id/rl_profile_feekback_layout"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="#fff">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/setting_feedback_icon"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="50dp"
+                    android:text="意见反馈"
+                    android:layout_marginLeft="50dp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/profile_arrow_right"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp" />
+
+                <!--分割线-->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="50dp"
+                    android:alpha="0.5"
+                    android:background="#ccc"
+                    android:layout_marginLeft="50dp" />
+
+            </RelativeLayout>
+
+            <!--关于我们-->
+            <RelativeLayout
+                android:id="@+id/rl_profile_aboutme_layout"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="#fff">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/setting_help_icon"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="50dp"
+                    android:text="关于我们"
+                    android:layout_marginLeft="50dp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/profile_arrow_right"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp" />
+
+                <!--分割线-->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="50dp"
+                    android:alpha="0.5"
+                    android:background="#ccc"
+                    android:layout_marginLeft="50dp" />
+
+            </RelativeLayout>
+
+            <!--推荐给好友-->
+            <RelativeLayout
+                android:id="@+id/rl_profile_commend_layout"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="#fff">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/setting_share_icon"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="50dp"
+                    android:text="推荐给好友"
+                    android:layout_marginLeft="50dp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/profile_arrow_right"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp" />
+
+                <!--分割线-->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="50dp"
+                    android:alpha="0.5"
+                    android:background="#ccc"
+                    android:layout_marginLeft="50dp" />
+
+            </RelativeLayout>
+
+            <!--当前版本-->
+            <RelativeLayout
+                android:id="@+id/rl_profile_version_layout"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="#fff">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/setting_upload_icon"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="50dp"
+                    android:text="当前版本"
+                    android:layout_marginLeft="50dp" />
+
+                <TextView
+                    android:id="@+id/tv_profile_current_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:text="v1.4.1"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</android.support.v4.widget.NestedScrollView>

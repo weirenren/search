@@ -116,3 +116,11 @@
 -dontwarn okio.**
 -dontwarn javax.annotation.Nullable
 -dontwarn javax.annotation.ParametersAreNonnullByDefault
+
+
+##----------------- 指定某个类不扰码的annotation-----
+-keep public class com.baidu.appsearch.annotation.NoProguard
+-keep @com.baidu.appsearch.annotation.NoProguard class *
+-keepclassmembers @com.baidu.appsearch.annotation.NoProguard class * {
+    *;
+}

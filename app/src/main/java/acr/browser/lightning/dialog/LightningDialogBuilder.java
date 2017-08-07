@@ -22,7 +22,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.MainActivity;
+import acr.browser.lightning.HomeBrowserActivity;
 import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
@@ -116,7 +116,7 @@ public class LightningDialogBuilder {
                     uiController.handleNewTab(NewTab.BACKGROUND, item.getUrl());
                 }
             },
-            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof MainActivity) {
+            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof HomeBrowserActivity) {
                 @Override
                 public void onClick() {
                     uiController.handleNewTab(NewTab.INCOGNITO, item.getUrl());
@@ -312,7 +312,7 @@ public class LightningDialogBuilder {
                     uiController.handleNewTab(NewTab.BACKGROUND, url);
                 }
             },
-            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof MainActivity) {
+            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof HomeBrowserActivity) {
                 @Override
                 public void onClick() {
                     uiController.handleNewTab(NewTab.INCOGNITO, url);
@@ -364,7 +364,7 @@ public class LightningDialogBuilder {
                     uiController.handleNewTab(NewTab.BACKGROUND, url);
                 }
             },
-            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof MainActivity) {
+            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof HomeBrowserActivity) {
                 @Override
                 public void onClick() {
                     uiController.handleNewTab(NewTab.INCOGNITO, url);
@@ -406,7 +406,7 @@ public class LightningDialogBuilder {
                     uiController.handleNewTab(NewTab.BACKGROUND, url);
                 }
             },
-            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof MainActivity) {
+            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof HomeBrowserActivity) {
                 @Override
                 public void onClick() {
                     uiController.handleNewTab(NewTab.INCOGNITO, url);

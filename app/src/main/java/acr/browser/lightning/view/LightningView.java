@@ -31,6 +31,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
+import android.widget.FrameLayout;
+import android.widget.GridView;
+import android.widget.LinearLayout;
 
 import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.Single;
@@ -40,11 +43,15 @@ import com.anthonycr.bonsai.SingleSubscriber;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import acr.browser.lightning.BrowserApp;
+import acr.browser.lightning.GridAdapter;
+import acr.browser.lightning.R;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.DownloadsPage;
@@ -64,7 +71,7 @@ import acr.browser.lightning.utils.Utils;
  * as properly initialing it. All interactions with the
  * WebView should be made through this class.
  */
-public class LightningView {
+public class LightningView implements GridAdapter.WebLauncherListener{
 
     private static final String TAG = "LightningView";
 
@@ -92,6 +99,9 @@ public class LightningView {
 
     @NonNull private final LightningViewTitle mTitle;
     @Nullable private WebView mWebView;
+    @Nullable private TouchableContainer mContentView;
+    @Nullable private GridView mGridView;
+    @Nullable private GridAdapter mGridApdater;
     @NonNull private final UIController mUIController;
     @NonNull private final GestureDetector mGestureDetector;
     @NonNull private final Activity mActivity;
@@ -101,12 +111,17 @@ public class LightningView {
     private boolean mIsForegroundTab;
     private boolean mInvertPage = false;
     private boolean mToggleDesktop = false;
+
+    private boolean mCurrentHomePage = true;
     @NonNull private final WebViewHandler mWebViewHandler = new WebViewHandler(this);
     @NonNull private final Map<String, String> mRequestHeaders = new ArrayMap<>();
 
     @Inject PreferenceManager mPreferences;
     @Inject LightningDialogBuilder mDialogBuilder;
     @Inject ProxyUtils mProxyUtils;
+
+    private static final ViewGroup.LayoutParams MATCH_PARENT = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT);
 
     public LightningView(@NonNull Activity activity, @Nullable String url, boolean isIncognito) {
         BrowserApp.getAppComponent().inject(this);
@@ -126,6 +141,8 @@ public class LightningView {
         mWebView.setFocusable(true);
         mWebView.setDrawingCacheEnabled(false);
         mWebView.setWillNotCacheDrawing(true);
+        mWebView.getSettings().setUseWideViewPort(true);
+        mWebView.getSettings().setLoadWithOverviewMode(true);
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
             //noinspection deprecation
             mWebView.setAnimationCacheEnabled(false);
@@ -141,20 +158,87 @@ public class LightningView {
         mWebView.setWebViewClient(new LightningWebClient(activity, this));
         mWebView.setDownloadListener(new LightningDownloadListener(activity));
         mGestureDetector = new GestureDetector(activity, new CustomGestureListener());
-        mWebView.setOnTouchListener(new TouchListener());
+//        mWebView.setOnTouchListener(new TouchListener());
+
         sDefaultUserAgent = mWebView.getSettings().getUserAgentString();
         initializeSettings();
         initializePreferences(activity);
 
+        mContentView = (TouchableContainer) mActivity.getLayoutInflater().inflate(R.layout.activity_home, null);
+        mContentView.setTouchListener(new TouchListener());
+        mContentView.setLightningView(this);
+
+        FrameLayout frameLayout = mContentView.findViewById(R.id.search_content);
+        frameLayout.addView(mWebView, MATCH_PARENT);
+        mGridView = mContentView.findViewById(R.id.home_gridview);
+        mGridApdater = new GridAdapter(mActivity);
+        mGridApdater.setDataList(genData());
+        mGridView.setAdapter(mGridApdater);
+        mGridApdater.notifyDataSetChanged();
+
         if (url != null) {
             if (!url.trim().isEmpty()) {
-                mWebView.loadUrl(url, mRequestHeaders);
+                loadUrl(url, mRequestHeaders);
             } else {
                 // don't load anything, the user is looking for a blank tab
             }
         } else {
             loadHomepage();
         }
+    }
+
+    public void setWebViewScroll(final boolean scroll) {
+        mWebView.setVerticalScrollBarEnabled(scroll);
+        mWebView.setHorizontalScrollBarEnabled(scroll);
+
+//Only disabled the horizontal scrolling:
+        mWebView.getSettings().setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
+        mWebView.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                if (scroll) {
+                    return false;
+                }
+                return (event.getAction() == MotionEvent.ACTION_MOVE);
+            }
+        });
+    }
+
+    public List<GridAdapter.ItemData> genData() {
+
+        List<GridAdapter.ItemData> list = new ArrayList<>();
+
+        list.add(new GridAdapter.ItemData("头条", "https://m.toutiao.com/?W2atIF=1", this));
+        list.add(new GridAdapter.ItemData("喜马拉雅FM", "https://m.ximalaya.com", this));
+        list.add(new GridAdapter.ItemData("读书", "http://dushu.xiaomi.com/#page=main&tab=0", this));
+        list.add(new GridAdapter.ItemData("音乐", "https://music.baidu.com/home", this));
+        list.add(new GridAdapter.ItemData("环球网", "http://m.huanqiu.com", this));
+        list.add(new GridAdapter.ItemData("铁血", "http://m.tiexue.net", this));
+        list.add(new GridAdapter.ItemData("糗事百科", "https://www.qiushibaike.com", this));
+        list.add(new GridAdapter.ItemData("爱奇艺", "http://m.iqiyi.com", this));
+        list.add(new GridAdapter.ItemData("折800", "https://m.zhe800.com", this));
+
+        return list;
+    }
+
+    public void interceptUrl(String url) {
+
+        mCurrentHomePage = url.startsWith(Constants.FILE);
+
+        mGridView.setVisibility(mCurrentHomePage ? View.VISIBLE : View.GONE);
+
+        setWebViewScroll(!mCurrentHomePage);
+
+        Log.d(TAG, "interceptUrl -> " + url + " -> homepage:" + mCurrentHomePage);
+    }
+
+    private void loadUrl(String url, Map<String, String> requestHeaders) {
+        if (requestHeaders != null) {
+            mWebView.loadUrl(url, requestHeaders);
+        } else {
+            mWebView.loadUrl(url);
+        }
+
+        Log.d(TAG, "loadUrl -> " + url + " -> homepage:" + mCurrentHomePage);
     }
 
     /**
@@ -201,7 +285,7 @@ public class LightningView {
                 loadBookmarkpage();
                 break;
             default:
-                mWebView.loadUrl(sHomepage, mRequestHeaders);
+                loadUrl(sHomepage, mRequestHeaders);
                 break;
         }
     }
@@ -211,7 +295,7 @@ public class LightningView {
      * class asynchronously and loads the URL in the WebView on the
      * UI thread.
      */
-    private void loadStartpage() {
+    public void loadStartpage() {
         new StartPage().getHomepage()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.main())
@@ -1063,6 +1147,10 @@ public class LightningView {
         return mWebView;
     }
 
+    public synchronized LinearLayout getContentView() {
+        return mContentView;
+    }
+
     /**
      * Gets the favicon currently in use by
      * the page. If the current page does not
@@ -1093,7 +1181,7 @@ public class LightningView {
         }
 
         if (mWebView != null) {
-            mWebView.loadUrl(url, mRequestHeaders);
+            loadUrl(url, mRequestHeaders);
         }
     }
 
@@ -1122,6 +1210,11 @@ public class LightningView {
         } else {
             return "";
         }
+    }
+
+    @Override
+    public void launch(int id, String url) {
+        loadUrl(url);
     }
 
     /**

@@ -40,13 +40,13 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
-import acr.browser.lightning.BrowserApp;
+import acr.browser.lightning.adblock.AdBlock;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.dialog.BrowserDialog;
-import acr.browser.lightning.adblock.AdBlock;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ProxyUtils;
@@ -127,6 +127,7 @@ public class LightningWebClient extends WebViewClient {
             mUIController.showActionBar();
         }
         mUIController.tabChanged(mLightningView);
+        mLightningView.interceptUrl(url);
     }
 
     @Override
